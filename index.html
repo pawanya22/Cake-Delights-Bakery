@@ -3,271 +3,634 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cake Delights | Artisanal Bakery</title>
+    <title>Harmony Player | Spotify-Style Music Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #1db954;
+            --secondary: #121212;
+            --dark: #191414;
+            --light: #ffffff;
+            --gray: #b3b3b3;
+            --dark-gray: #282828;
+            --card-bg: #181818;
+            --sidebar-bg: #000000;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        :root {
-            --primary: #ff6b8b;
-            --secondary: #ffb6c1;
-            --accent: #ffd700;
-            --dark: #5d4037;
-            --light: #fff8f0;
-            --text: #4e342e;
-            --success: #4CAF50;
         }
 
         body {
-            background-color: var(--light);
-            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--secondary), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
             overflow-x: hidden;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="20" cy="20" r="3" fill="%23ffd700" opacity="0.3"/><circle cx="50" cy="70" r="2" fill="%23ffd700" opacity="0.3"/><circle cx="80" cy="40" r="4" fill="%23ffd700" opacity="0.3"/></svg>');
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header & Navigation */
-        header {
-            background: linear-gradient(to right, rgba(255, 182, 193, 0.95), rgba(255, 107, 139, 0.95));
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .header-container {
+        /* Header Styles */
+        .header {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            text-decoration: none;
+            gap: 10px;
         }
 
-        .logo-icon {
-            font-size: 2.5rem;
-            color: var(--accent);
-            margin-right: 10px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        .logo i {
+            color: var(--primary);
+            font-size: 28px;
         }
 
-        .logo-text {
+        .logo h1 {
             font-size: 1.8rem;
             font-weight: 700;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(90deg, var(--primary), #1ed760);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .logo-text span {
-            color: var(--accent);
+        .search-bar {
+            flex: 0 0 40%;
+            position: relative;
         }
 
-        nav ul {
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .user-actions {
             display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-actions button {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-actions button:hover {
+            color: var(--primary);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Main Content */
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            height: calc(100vh - 170px);
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--sidebar-bg);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 25px;
+            padding: 0 20px;
+        }
+
+        .sidebar-title {
+            color: var(--gray);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-menu {
             list-style: none;
         }
 
-        nav ul li {
-            margin-left: 25px;
+        .sidebar-menu li {
+            margin-bottom: 10px;
         }
 
-        nav ul li a {
-            color: white;
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--light);
             text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 8px 15px;
-            border-radius: 30px;
+            padding: 8px 0;
+            font-weight: 500;
             transition: all 0.3s ease;
-            position: relative;
+            border-radius: 5px;
         }
 
-        nav ul li a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            color: var(--primary);
         }
 
-        nav ul li a.active {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .cart-icon {
-            position: relative;
-            color: white;
-            font-size: 1.5rem;
-            margin-left: 25px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .cart-icon:hover {
-            transform: scale(1.1);
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: var(--accent);
-            color: var(--dark);
-            font-size: 0.8rem;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1980&q=80');
-            background-size: cover;
-            background-position: center;
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            color: white;
+        .sidebar-menu i {
+            width: 24px;
             text-align: center;
-            position: relative;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: var(--accent);
-            color: var(--dark);
-            padding: 15px 35px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 700;
             font-size: 1.2rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border: none;
-            cursor: pointer;
         }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            background-color: #ffcc00;
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-        }
-
-        /* About Section */
-        .about {
-            padding: 80px 0;
-            background-color: white;
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
         }
 
         .section-title {
-            text-align: center;
-            font-size: 2.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--light);
+        }
+
+        .genre-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .genre-tab {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .genre-tab.active, .genre-tab:hover {
+            background: var(--primary);
             color: var(--dark);
-            margin-bottom: 50px;
+        }
+
+        .playlists {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .playlist-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .playlist-card:hover {
+            background: #282828;
+            transform: translateY(-5px);
+        }
+
+        .playlist-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            overflow: hidden;
             position: relative;
         }
 
-        .section-title::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background-color: var(--primary);
-            border-radius: 2px;
-        }
-
-        .about-content {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-        }
-
-        .about-text {
-            flex: 1;
-        }
-
-        .about-text h3 {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .about-text p {
-            margin-bottom: 20px;
-            line-height: 1.8;
-        }
-
-        .about-image {
-            flex: 1;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .about-image img {
+        .playlist-img img {
             width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
         }
 
-        .about-image img:hover {
+        .playlist-card:hover .playlist-img img {
             transform: scale(1.05);
         }
 
-        /* Modal Styles */
+        .play-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .playlist-card:hover .play-button {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .play-button i {
+            color: var(--dark);
+            font-size: 1.2rem;
+        }
+
+        .playlist-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-desc {
+            font-size: 0.9rem;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+
+        /* Player Controls */
+        .player-container {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .now-playing {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 200px;
+        }
+
+        .now-playing-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .now-playing-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .song-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .song-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--light);
+        }
+
+        .song-artist {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .song-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 15px;
+        }
+
+        .song-actions button {
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .song-actions button:hover {
+            color: var(--light);
+        }
+
+        .player-controls {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 400px;
+        }
+
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .control-buttons button {
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-buttons button:hover {
+            color: var(--light);
+        }
+
+        .control-buttons .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-buttons .play-btn:hover {
+            transform: scale(1.05);
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        .progress-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-time {
+            color: var(--gray);
+            font-size: 0.8rem;
+            min-width: 40px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--gray);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .progress:hover {
+            background: var(--primary);
+        }
+
+        .progress-handle {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--light);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .progress-bar:hover .progress-handle {
+            opacity: 1;
+        }
+
+        .extra-controls {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 150px;
+        }
+
+        .volume-control i {
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        .volume-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .volume-level {
+            height: 100%;
+            background: var(--gray);
+            border-radius: 2px;
+            width: 70%;
+            transition: width 0.1s linear;
+        }
+
+        .volume-bar:hover .volume-level {
+            background: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar-title, .sidebar-menu span {
+                display: none;
+            }
+            
+            .sidebar-menu a {
+                justify-content: center;
+            }
+            
+            .search-bar {
+                flex: 0 0 30%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .search-bar {
+                order: 3;
+                flex: 0 0 100%;
+            }
+            
+            .player-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .now-playing, .player-controls, .extra-controls {
+                width: 100%;
+            }
+            
+            .player-controls {
+                min-width: auto;
+            }
+            
+            .control-buttons {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .playlists {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+            
+            .genre-tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Animation for visualizer */
+        .visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 40px;
+            gap: 3px;
+            margin-top: 5px;
+        }
+
+        .bar {
+            width: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+            height: 10px;
+            animation: visualizer 1.2s infinite alternate;
+        }
+
+        .bar:nth-child(1) { animation-delay: 0s; height: 8px; }
+        .bar:nth-child(2) { animation-delay: 0.2s; height: 12px; }
+        .bar:nth-child(3) { animation-delay: 0.4s; height: 16px; }
+        .bar:nth-child(4) { animation-delay: 0.6s; height: 20px; }
+        .bar:nth-child(5) { animation-delay: 0.8s; height: 24px; }
+        .bar:nth-child(6) { animation-delay: 1.0s; height: 20px; }
+        .bar:nth-child(7) { animation-delay: 0.8s; height: 16px; }
+        .bar:nth-child(8) { animation-delay: 0.6s; height: 12px; }
+        .bar:nth-child(9) { animation-delay: 0.4s; height: 8px; }
+
+        @keyframes visualizer {
+            0% { height: 8px; }
+            100% { height: 24px; }
+        }
+        
+        /* Hidden audio element */
+        #audio-player {
+            display: none;
+        }
+        
+        /* Song list modal */
         .modal {
             display: none;
             position: fixed;
@@ -275,897 +638,726 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 200;
-            justify-content: center;
-            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            overflow: auto;
         }
-
+        
         .modal-content {
-            background: white;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: modalAppear 0.4s ease-out;
-        }
-
-        @keyframes modalAppear {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: white;
+            background: var(--dark);
+            margin: 5% auto;
             padding: 20px;
-            border-radius: 15px 15px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h2 {
-            font-size: 1.8rem;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .close-modal:hover {
-            transform: rotate(90deg);
-        }
-
-        .modal-body {
-            padding: 25px;
-        }
-
-        .cart-items {
-            max-height: 300px;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
             overflow-y: auto;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 20px;
         }
-
-        .cart-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-
-        .cart-item-img {
-            width: 70px;
-            height: 70px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-right: 15px;
-        }
-
-        .cart-item-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .cart-item-details {
-            flex: 1;
-        }
-
-        .cart-item-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .cart-item-price {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            margin-top: 8px;
-        }
-
-        .quantity-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--secondary);
-            color: white;
-            border: none;
-            font-size: 1rem;
+        
+        .close-modal {
+            color: var(--gray);
+            float: right;
+            font-size: 28px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
         }
-
-        .quantity-btn:hover {
-            background: var(--primary);
-        }
-
-        .quantity-display {
-            margin: 0 10px;
-            font-weight: 600;
-            min-width: 25px;
-            text-align: center;
-        }
-
-        .remove-item {
-            background: none;
-            border: none;
-            color: #ff6b6b;
-            cursor: pointer;
-            margin-left: 15px;
-            font-size: 1.2rem;
-            transition: transform 0.3s;
-        }
-
-        .remove-item:hover {
-            transform: scale(1.2);
-            color: #ff0000;
-        }
-
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 20px 0;
-            padding: 15px 0;
-            border-top: 2px dashed var(--secondary);
-            border-bottom: 2px dashed var(--secondary);
-        }
-
-        .empty-cart {
-            text-align: center;
-            padding: 30px 0;
-            color: #888;
-        }
-
-        .empty-cart i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: var(--secondary);
-        }
-
-        .checkout-form {
+        
+        .song-list {
             margin-top: 20px;
         }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1rem;
-            background: var(--success);
-            color: white;
-        }
-
-        .checkout-btn:hover {
-            background: #45a049;
-        }
-
-        /* Products Section */
-        .products {
-            padding: 80px 0;
-            background-color: var(--light);
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            color: var(--dark);
-            margin-bottom: 50px;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background-color: var(--primary);
-            border-radius: 2px;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-        }
-
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .product-image {
-            height: 250px;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .product-card:hover .product-image img {
-            transform: scale(1.1);
-        }
-
-        .product-info {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .product-info h3 {
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
-
-        .product-info p {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-        }
-
-        /* Testimonials */
-        .testimonials {
-            padding: 80px 0;
-            background: linear-gradient(to right, var(--secondary), var(--primary));
-            color: white;
-        }
-
-        .testimonials-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .testimonial {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            margin: 20px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .testimonial-content {
-            font-style: italic;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            line-height: 1.7;
-        }
-
-        .testimonial-author {
+        
+        .song-item {
             display: flex;
             align-items: center;
-            justify-content: center;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: all 0.2s;
         }
-
-        .author-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            overflow: hidden;
+        
+        .song-item:hover {
+            background: #282828;
+        }
+        
+        .song-item.active {
+            background: rgba(29, 185, 84, 0.2);
+        }
+        
+        .song-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
             margin-right: 15px;
-            border: 3px solid var(--accent);
         }
-
-        .author-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        
+        .song-item .song-details {
+            flex: 1;
         }
-
-        .author-info h4 {
-            font-size: 1.3rem;
+        
+        .song-item .song-details h3 {
+            font-size: 1rem;
             margin-bottom: 5px;
         }
-
-        .author-info p {
+        
+        .song-item .song-details p {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .song-item .song-duration {
+            color: var(--gray);
             font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--dark);
-            color: white;
-            padding: 50px 0 20px;
-        }
-
-        .footer-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .footer-col h3 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: var(--accent);
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .footer-col h3::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--primary);
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        /* Order Confirmation */
-        .order-confirmation {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--success);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 300;
-            transform: translateX(150%);
-            transition: transform 0.5s ease;
-        }
-
-        .order-confirmation.show {
-            transform: translateX(0);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            nav ul {
-                margin-top: 15px;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            nav ul li {
-                margin: 8px;
-            }
-            
-            .cart-icon {
-                margin-top: 15px;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
+            margin: 0 15px;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container header-container">
-            <a href="#" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-birthday-cake"></i>
-                </div>
-                <div class="logo-text">
-                    Cake <span>Delights</span>
-                </div>
-            </a>
-            <nav>
-                <ul>
-                    <li><a href="#home" class="active">Home</a></li>
-                    <li><a href="#products">Cakes</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-            <div class="cart-icon" id="cartIcon">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-count" id="cartCount">0</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="container hero-content">
-            <h1>Handcrafted Cakes for Life's Sweet Moments</h1>
-            <p>Indulge in our artisanal cakes made with premium ingredients and lots of love</p>
-            <a href="#products" class="btn">Order Now</a>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="container">
-            <h2 class="section-title">Our Story</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <h3>Baking Happiness Since 2010</h3>
-                    <p>At Cake Delights, we believe that every celebration deserves a beautiful, delicious cake. Our journey began in a small home kitchen with a passion for baking and a dream to create unforgettable cakes for our community.</p>
-                    <p>Today, our team of talented pastry chefs continues that tradition, crafting custom cakes that are as beautiful as they are delicious. We use only the finest ingredients, sourced locally whenever possible, to create cakes that delight all your senses.</p>
-                    <p>Whether you're celebrating a birthday, wedding, or just a Tuesday, we have the perfect cake to make your moment special.</p>
-                </div>
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Bakery interior">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="products" id="products">
-        <div class="container">
-            <h2 class="section-title">Our Signature Cakes</h2>
-            <div class="products-grid" id="productsGrid">
-                <!-- Products will be dynamically added here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Cart Modal -->
-    <div class="modal" id="cartModal">
+    <!-- Audio Player -->
+    <audio id="audio-player"></audio>
+    
+    <!-- Song List Modal -->
+    <div id="song-list-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>Your Cart</h2>
-                <button class="close-modal" id="closeModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="cart-items" id="cartItems">
-                    <!-- Cart items will be dynamically added here -->
-                </div>
-                <div class="cart-total">
-                    <span>Total:</span>
-                    <span id="cartTotal">$0.00</span>
-                </div>
-                <form class="checkout-form" id="checkoutForm">
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" id="name" required placeholder="Enter your name">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" required placeholder="Enter your phone number">
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Delivery Address</label>
-                        <input type="text" id="address" required placeholder="Enter delivery address">
-                    </div>
-                    <button type="submit" class="btn checkout-btn">Complete Order</button>
-                </form>
+            <span class="close-modal">&times;</span>
+            <h2 class="section-title">Current Playlist</h2>
+            <div class="song-list" id="song-list-container">
+                <!-- Song items will be generated by JavaScript -->
             </div>
         </div>
     </div>
-
-    <!-- Order Confirmation -->
-    <div class="order-confirmation" id="orderConfirmation">
-        <i class="fas fa-check-circle"></i>
-        <div>Order placed successfully! We'll contact you soon.</div>
+    
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-music"></i>
+            <h1>HarmonyPlayer</h1>
+        </div>
+        
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search for artists, songs, or albums" id="search-input">
+        </div>
+        
+        <div class="user-actions">
+            <button title="Upgrade to Premium"><i class="fas fa-crown"></i></button>
+            <button title="Settings"><i class="fas fa-cog"></i></button>
+            <button title="Notifications"><i class="fas fa-bell"></i></button>
+            <div class="user-profile">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                <span>John</span>
+            </div>
+        </div>
     </div>
-
-    <!-- Testimonials Section -->
-    <section class="testimonials" id="testimonials">
-        <div class="container testimonials-container">
-            <h2 class="section-title">Sweet Words From Our Customers</h2>
-            <div class="testimonial">
-                <div class="testimonial-content">
-                    "The wedding cake was absolutely stunning and tasted even better than it looked! All our guests were raving about it. Cake Delights made our special day even sweeter."
-                </div>
-                <div class="testimonial-author">
-                    <div class="author-image">
-                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah Johnson">
-                    </div>
-                    <div class="author-info">
-                        <h4>Sarah Johnson</h4>
-                        <p>Wedding Client</p>
-                    </div>
-                </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                    <li><a href="#"><i class="fas fa-search"></i> <span>Search</span></a></li>
+                    <li><a href="#"><i class="fas fa-book"></i> <span>Your Library</span></a></li>
+                </ul>
             </div>
-            <div class="testimonial">
-                <div class="testimonial-content">
-                    "I've ordered birthday cakes from Cake Delights for the past three years and they never disappoint. The flavors are incredible and the designs are always perfect!"
-                </div>
-                <div class="testimonial-author">
-                    <div class="author-image">
-                        <img src="https://randomuser.me/api/portraits/men/54.jpg" alt="Michael Brown">
-                    </div>
-                    <div class="author-info">
-                        <h4>Michael Brown</h4>
-                        <p>Regular Customer</p>
-                    </div>
-                </div>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Playlists</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#"><i class="fas fa-plus-square"></i> <span>Create Playlist</span></a></li>
+                    <li><a href="#"><i class="fas fa-heart"></i> <span>Liked Songs</span></a></li>
+                    <li><a href="#"><i class="fas fa-compact-disc"></i> <span>My Playlist #1</span></a></li>
+                    <li><a href="#"><i class="fas fa-compact-disc"></i> <span>Workout Mix</span></a></li>
+                    <li><a href="#"><i class="fas fa-compact-disc"></i> <span>Chill Vibes</span></a></li>
+                </ul>
             </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-col">
-                    <h3>Cake Delights</h3>
-                    <p>Creating delicious memories one cake at a time. We specialize in custom cakes for all occasions.</p>
-                </div>
-                <div class="footer-col">
-                    <h3>Contact Us</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> 123 Sweet Avenue, Dessert City</p>
-                    <p><i class="fas fa-phone"></i> (555) 123-4567</p>
-                    <p><i class="fas fa-envelope"></i> order@cakedelights.com</p>
-                </div>
-                <div class="footer-col">
-                    <h3>Opening Hours</h3>
-                    <p>Monday-Friday: 8am - 7pm</p>
-                    <p>Saturday: 8am - 8pm</p>
-                    <p>Sunday: 9am - 5pm</p>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 Cake Delights Bakery. All rights reserved.</p>
+            
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Genres</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#" data-genre="hollywood"><i class="fas fa-globe-americas"></i> <span>Hollywood</span></a></li>
+                    <li><a href="#" data-genre="bollywood"><i class="fas fa-om"></i> <span>Bollywood</span></a></li>
+                    <li><a href="#" data-genre="sinhala"><i class="fas fa-dragon"></i> <span>Sinhala</span></a></li>
+                    <li><a href="#"><i class="fas fa-guitar"></i> <span>Rock</span></a></li>
+                    <li><a href="#"><i class="fas fa-headphones"></i> <span>Pop</span></a></li>
+                </ul>
             </div>
         </div>
-    </footer>
-
-    <script>
-        // Product Data
-        const products = [
-            {
-                id: 1,
-                name: "Chocolate Indulgence",
-                price: 42.99,
-                image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                description: "Rich chocolate cake with layers of chocolate ganache and chocolate buttercream"
-            },
-            {
-                id: 2,
-                name: "Red Velvet Dream",
-                price: 48.99,
-                image: "https://images.unsplash.com/photo-1557925923-cd4648e211a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                description: "Classic red velvet cake with cream cheese frosting and red velvet crumbs"
-            },
-            {
-                id: 3,
-                name: "Vanilla Bean Bliss",
-                price: 39.99,
-                image: "https://images.unsplash.com/photo-1586788680434-30d324b2d46f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                description: "Premium vanilla bean cake with vanilla buttercream and fresh berries"
-            },
-            {
-                id: 4,
-                name: "Strawberry Sensation",
-                price: 45.99,
-                image: "https://images.unsplash.com/photo-1535141192574-5d4897c12636?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                description: "Light sponge cake with layers of fresh strawberries and whipped cream"
-            },
-            {
-                id: 5,
-                name: "Lemon Zest Delight",
-                price: 43.99,
-                image: "https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                description: "Tangy lemon cake with lemon curd filling and lemon buttercream"
-            },
-            {
-                id: 6,
-                name: "Carrot Cake Supreme",
-                price: 46.99,
-                image: "https://images.unsplash.com/photo-1627834377411-8da5f4f09de8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                description: "Moist carrot cake with cream cheese frosting and walnut topping"
-            }
-        ];
-
-        // Initialize cart
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const cartCount = document.getElementById('cartCount');
-        const cartIcon = document.getElementById('cartIcon');
-        const cartModal = document.getElementById('cartModal');
-        const closeModal = document.getElementById('closeModal');
-        const cartItems = document.getElementById('cartItems');
-        const cartTotal = document.getElementById('cartTotal');
-        const productsGrid = document.getElementById('productsGrid');
-        const checkoutForm = document.getElementById('checkoutForm');
-        const orderConfirmation = document.getElementById('orderConfirmation');
-
-        // Render products
-        function renderProducts() {
-            productsGrid.innerHTML = '';
-            products.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.innerHTML = `
-                    <div class="product-image">
-                        <img src="${product.image}" alt="${product.name}">
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="genre-section">
+                <h2 class="section-title">Browse Genres</h2>
+                <div class="genre-tabs">
+                    <div class="genre-tab active" data-genre="all">All</div>
+                    <div class="genre-tab" data-genre="hollywood">Hollywood</div>
+                    <div class="genre-tab" data-genre="bollywood">Bollywood</div>
+                    <div class="genre-tab" data-genre="sinhala">Sinhala</div>
+                    <div class="genre-tab" data-genre="rock">Rock</div>
+                    <div class="genre-tab" data-genre="pop">Pop</div>
+                </div>
+            </div>
+            
+            <div class="featured-section">
+                <h2 class="section-title">Recently Played</h2>
+                <div class="playlists">
+                    <div class="playlist-card" data-playlist="hollywood">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?hollywood,music" alt="Hollywood Hits">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Hollywood Hits</h3>
+                        <p class="playlist-desc">Top charting Hollywood songs</p>
                     </div>
-                    <div class="product-info">
-                        <h3>${product.name}</h3>
-                        <p>$${product.price.toFixed(2)}</p>
-                        <button class="btn add-to-cart" data-id="${product.id}">Add to Cart</button>
-                    </div>
-                `;
-                productsGrid.appendChild(productCard);
-            });
-
-            // Add event listeners to Add to Cart buttons
-            document.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = parseInt(this.getAttribute('data-id'));
-                    addToCart(productId);
                     
-                    // Animate cart icon
-                    cartIcon.style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        cartIcon.style.transform = 'scale(1)';
-                    }, 300);
-                });
-            });
-        }
-
-        // Add to cart function
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            const existingItem = cart.find(item => item.id === productId);
+                    <div class="playlist-card" data-playlist="bollywood">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?bollywood,music" alt="Bollywood Beats">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Bollywood Beats</h3>
+                        <p class="playlist-desc">Best of Bollywood 2023</p>
+                    </div>
+                    
+                    <div class="playlist-card" data-playlist="sinhala">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?srilanka,music" alt="Sinhala Classics">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Sinhala Classics</h3>
+                        <p class="playlist-desc">Timeless Sinhala melodies</p>
+                    </div>
+                    
+                    <div class="playlist-card" data-playlist="rock">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?rock,music" alt="Rock Legends">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Rock Legends</h3>
+                        <p class="playlist-desc">Classic rock anthems</p>
+                    </div>
+                    
+                    <div class="playlist-card" data-playlist="pop">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?pop,music" alt="Pop Revolution">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Pop Revolution</h3>
+                        <p class="playlist-desc">Modern pop hits</p>
+                    </div>
+                    
+                    <div class="playlist-card" data-playlist="dance">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?dance,music" alt="Dance Floor">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Dance Floor</h3>
+                        <p class="playlist-desc">Energetic dance tracks</p>
+                    </div>
+                </div>
+            </div>
             
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                });
+            <div class="new-releases">
+                <h2 class="section-title">New Releases</h2>
+                <div class="playlists">
+                    <div class="playlist-card" data-playlist="summer">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?summer,music" alt="Summer Vibes">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Summer Vibes</h3>
+                        <p class="playlist-desc">Chill summer playlist</p>
+                    </div>
+                    
+                    <div class="playlist-card" data-playlist="focus">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?focus,music" alt="Focus Mode">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Focus Mode</h3>
+                        <p class="playlist-desc">Concentration booster</p>
+                    </div>
+                    
+                    <div class="playlist-card" data-playlist="roadtrip">
+                        <div class="playlist-img">
+                            <img src="https://source.unsplash.com/random/600x600/?road,trip" alt="Road Trip">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <h3 class="playlist-title">Road Trip</h3>
+                        <p class="playlist-desc">Perfect for long drives</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Player Controls -->
+    <div class="player-container">
+        <div class="now-playing">
+            <div class="now-playing-img">
+                <img id="current-song-img" src="https://source.unsplash.com/random/600x600/?music,album" alt="Now Playing">
+            </div>
+            <div class="song-info">
+                <div class="song-title" id="current-song-title">Select a song to play</div>
+                <div class="song-artist" id="current-song-artist">-</div>
+            </div>
+            <div class="song-actions">
+                <button title="Add to favorites" id="favorite-btn"><i class="far fa-heart"></i></button>
+                <button title="View playlist" id="playlist-btn"><i class="fas fa-list"></i></button>
+            </div>
+        </div>
+        
+        <div class="player-controls">
+            <div class="control-buttons">
+                <button title="Shuffle" id="shuffle-btn"><i class="fas fa-random"></i></button>
+                <button title="Previous" id="prev-btn"><i class="fas fa-step-backward"></i></button>
+                <button class="play-btn" title="Play/Pause" id="play-btn"><i class="fas fa-play"></i></button>
+                <button title="Next" id="next-btn"><i class="fas fa-step-forward"></i></button>
+                <button title="Repeat" id="repeat-btn"><i class="fas fa-redo"></i></button>
+            </div>
+            <div class="progress-container">
+                <div class="progress-time" id="current-time">0:00</div>
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                    <div class="progress-handle"></div>
+                </div>
+                <div class="progress-time" id="total-time">0:00</div>
+            </div>
+            <div class="visualizer" id="visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+        
+        <div class="extra-controls">
+            <div class="volume-control">
+                <i class="fas fa-volume-up"></i>
+                <div class="volume-bar" id="volume-bar">
+                    <div class="volume-level" id="volume-level"></div>
+                </div>
+            </div>
+            <button title="Lyrics"><i class="fas fa-microphone-alt"></i></button>
+            <button title="Queue"><i class="fas fa-list"></i></button>
+            <button title="Devices"><i class="fas fa-laptop"></i></button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const audioPlayer = document.getElementById('audio-player');
+            const playBtn = document.getElementById('play-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const shuffleBtn = document.getElementById('shuffle-btn');
+            const repeatBtn = document.getElementById('repeat-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const progress = document.getElementById('progress');
+            const currentTimeEl = document.getElementById('current-time');
+            const totalTimeEl = document.getElementById('total-time');
+            const volumeBar = document.getElementById('volume-bar');
+            const volumeLevel = document.getElementById('volume-level');
+            const currentSongImg = document.getElementById('current-song-img');
+            const currentSongTitle = document.getElementById('current-song-title');
+            const currentSongArtist = document.getElementById('current-song-artist');
+            const playlistBtn = document.getElementById('playlist-btn');
+            const songListModal = document.getElementById('song-list-modal');
+            const closeModal = document.querySelector('.close-modal');
+            const songListContainer = document.getElementById('song-list-container');
+            const genreTabs = document.querySelectorAll('.genre-tab');
+            const visualizer = document.getElementById('visualizer');
+            
+            // Sample music library
+            const musicLibrary = [
+                // Hollywood songs
+                {
+                    title: "Blinding Lights",
+                    artist: "The Weeknd",
+                    genre: "hollywood",
+                    cover: "https://source.unsplash.com/random/600x600/?night,city",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                    duration: "3:20"
+                },
+                {
+                    title: "Save Your Tears",
+                    artist: "The Weeknd",
+                    genre: "hollywood",
+                    cover: "https://source.unsplash.com/random/600x600/?tears,rain",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+                    duration: "3:35"
+                },
+                {
+                    title: "Levitating",
+                    artist: "Dua Lipa",
+                    genre: "hollywood",
+                    cover: "https://source.unsplash.com/random/600x600/?space,stars",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+                    duration: "3:23"
+                },
+                
+                // Bollywood songs
+                {
+                    title: "Tum Hi Ho",
+                    artist: "Arijit Singh",
+                    genre: "bollywood",
+                    cover: "https://source.unsplash.com/random/600x600/?india,music",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+                    duration: "4:22"
+                },
+                {
+                    title: "Chaiyya Chaiyya",
+                    artist: "Sukhwinder Singh",
+                    genre: "bollywood",
+                    cover: "https://source.unsplash.com/random/600x600/?train,india",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+                    duration: "5:10"
+                },
+                {
+                    title: "Ghungroo",
+                    artist: "Arijit Singh",
+                    genre: "bollywood",
+                    cover: "https://source.unsplash.com/random/600x600/?dance,india",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+                    duration: "4:02"
+                },
+                
+                // Sinhala songs
+                {
+                    title: "Sanda Mithuri",
+                    artist: "Nanda Malini",
+                    genre: "sinhala",
+                    cover: "https://source.unsplash.com/random/600x600/?srilanka,beach",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+                    duration: "5:15"
+                },
+                {
+                    title: "Sihina Lowak",
+                    artist: "Clarence Wijewardena",
+                    genre: "sinhala",
+                    cover: "https://source.unsplash.com/random/600x600/?srilanka,forest",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+                    duration: "4:50"
+                },
+                {
+                    title: "Mage Palpatha",
+                    artist: "Sunil Edirisinghe",
+                    genre: "sinhala",
+                    cover: "https://source.unsplash.com/random/600x600/?srilanka,tea",
+                    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
+                    duration: "4:30"
+                }
+            ];
+            
+            // Player state
+            let isPlaying = false;
+            let currentSongIndex = 0;
+            let repeatMode = 0; // 0: off, 1: all, 2: one
+            let isShuffled = false;
+            let originalPlaylist = [...musicLibrary];
+            let currentPlaylist = [...musicLibrary];
+            
+            // Initialize player
+            function initPlayer() {
+                // Set initial volume
+                audioPlayer.volume = 0.7;
+                volumeLevel.style.width = '70%';
+                
+                // Load first song
+                loadSong(currentSongIndex);
+                
+                // Render song list
+                renderSongList();
             }
             
-            updateCart();
-            saveCart();
-        }
-
-        // Remove from cart function
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCart();
-            saveCart();
-        }
-
-        // Update quantity function
-        function updateQuantity(productId, change) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity += change;
+            // Load song
+            function loadSong(index) {
+                const song = currentPlaylist[index];
+                currentSongImg.src = song.cover;
+                currentSongTitle.textContent = song.title;
+                currentSongArtist.textContent = song.artist;
+                audioPlayer.src = song.src;
                 
-                // Remove item if quantity becomes 0
-                if (item.quantity <= 0) {
-                    removeFromCart(productId);
-                } else {
-                    updateCart();
-                    saveCart();
+                // Set total time
+                totalTimeEl.textContent = song.duration;
+                
+                // Highlight active song in list
+                const songItems = document.querySelectorAll('.song-item');
+                songItems.forEach((item, i) => {
+                    if (i === index) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // Reset progress
+                progress.style.width = '0%';
+                currentTimeEl.textContent = '0:00';
+                
+                // Play the song
+                playSong();
+            }
+            
+            // Play song
+            function playSong() {
+                isPlaying = true;
+                audioPlayer.play();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                animateVisualizer(true);
+            }
+            
+            // Pause song
+            function pauseSong() {
+                isPlaying = false;
+                audioPlayer.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                animateVisualizer(false);
+            }
+            
+            // Next song
+            function nextSong() {
+                currentSongIndex++;
+                if (currentSongIndex >= currentPlaylist.length) {
+                    if (repeatMode === 1) {
+                        currentSongIndex = 0;
+                    } else {
+                        currentSongIndex = currentPlaylist.length - 1;
+                        pauseSong();
+                        return;
+                    }
+                }
+                loadSong(currentSongIndex);
+            }
+            
+            // Previous song
+            function prevSong() {
+                currentSongIndex--;
+                if (currentSongIndex < 0) {
+                    if (repeatMode === 1) {
+                        currentSongIndex = currentPlaylist.length - 1;
+                    } else {
+                        currentSongIndex = 0;
+                        return;
+                    }
+                }
+                loadSong(currentSongIndex);
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                const { currentTime, duration } = audioPlayer;
+                const progressPercent = (currentTime / duration) * 100;
+                progress.style.width = `${progressPercent}%`;
+                
+                // Format time
+                const minutes = Math.floor(currentTime / 60);
+                const seconds = Math.floor(currentTime % 60).toString().padStart(2, '0');
+                currentTimeEl.textContent = `${minutes}:${seconds}`;
+            }
+            
+            // Set progress
+            function setProgress(e) {
+                const width = this.clientWidth;
+                const clickX = e.offsetX;
+                const duration = audioPlayer.duration;
+                
+                // Set progress
+                audioPlayer.currentTime = (clickX / width) * duration;
+            }
+            
+            // Set volume
+            function setVolume(e) {
+                const width = volumeBar.clientWidth;
+                const clickX = e.offsetX;
+                const volume = clickX / width;
+                
+                audioPlayer.volume = volume;
+                volumeLevel.style.width = `${volume * 100}%`;
+            }
+            
+            // Toggle repeat mode
+            function toggleRepeat() {
+                repeatMode = (repeatMode + 1) % 3;
+                
+                switch (repeatMode) {
+                    case 0:
+                        repeatBtn.style.color = '';
+                        break;
+                    case 1:
+                        repeatBtn.style.color = 'var(--primary)';
+                        break;
+                    case 2:
+                        repeatBtn.style.color = 'var(--primary)';
+                        break;
                 }
             }
-        }
-
-        // Update cart UI
-        function updateCart() {
-            // Update cart count
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartCount.textContent = totalItems;
             
-            // Update cart items
-            cartItems.innerHTML = '';
-            
-            if (cart.length === 0) {
-                cartItems.innerHTML = `
-                    <div class="empty-cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <p>Your cart is empty</p>
-                        <p>Add some delicious cakes!</p>
-                    </div>
-                `;
-                cartTotal.textContent = '$0.00';
-                return;
-            }
-            
-            let total = 0;
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
+            // Toggle shuffle
+            function toggleShuffle() {
+                isShuffled = !isShuffled;
                 
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item';
-                cartItem.innerHTML = `
-                    <div class="cart-item-img">
-                        <img src="${item.image}" alt="${item.name}">
-                    </div>
-                    <div class="cart-item-details">
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">$${item.price.toFixed(2)}</div>
-                        <div class="cart-item-controls">
-                            <button class="quantity-btn minus" data-id="${item.id}">-</button>
-                            <div class="quantity-display">${item.quantity}</div>
-                            <button class="quantity-btn plus" data-id="${item.id}">+</button>
-                            <button class="remove-item" data-id="${item.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                cartItems.appendChild(cartItem);
-            });
-            
-            cartTotal.textContent = `$${total.toFixed(2)}`;
-            
-            // Add event listeners to quantity buttons
-            document.querySelectorAll('.minus').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    updateQuantity(id, -1);
-                });
-            });
-            
-            document.querySelectorAll('.plus').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    updateQuantity(id, 1);
-                });
-            });
-            
-            document.querySelectorAll('.remove-item').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    removeFromCart(id);
-                });
-            });
-        }
-
-        // Save cart to localStorage
-        function saveCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        // Checkout function
-        function checkout(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const address = document.getElementById('address').value;
-            
-            // In a real app, you would send this data to a server
-            console.log('Order placed:', { name, phone, address, cart });
-            
-            // Show confirmation
-            orderConfirmation.classList.add('show');
-            
-            // Clear cart
-            cart = [];
-            updateCart();
-            saveCart();
-            
-            // Close modal
-            cartModal.style.display = 'none';
-            
-            // Reset form
-            checkoutForm.reset();
-            
-            // Hide confirmation after 5 seconds
-            setTimeout(() => {
-                orderConfirmation.classList.remove('show');
-            }, 5000);
-        }
-
-        // Event Listeners
-        cartIcon.addEventListener('click', () => {
-            cartModal.style.display = 'flex';
-        });
-
-        closeModal.addEventListener('click', () => {
-            cartModal.style.display = 'none';
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === cartModal) {
-                cartModal.style.display = 'none';
+                if (isShuffled) {
+                    shuffleBtn.style.color = 'var(--primary)';
+                    // Create shuffled playlist (without current song)
+                    currentPlaylist = [...originalPlaylist];
+                    const currentSong = currentPlaylist.splice(currentSongIndex, 1)[0];
+                    
+                    // Shuffle array
+                    for (let i = currentPlaylist.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [currentPlaylist[i], currentPlaylist[j]] = [currentPlaylist[j], currentPlaylist[i]];
+                    }
+                    
+                    // Add current song at the beginning
+                    currentPlaylist.unshift(currentSong);
+                    currentSongIndex = 0;
+                } else {
+                    shuffleBtn.style.color = '';
+                    // Restore original order
+                    currentPlaylist = [...originalPlaylist];
+                    currentSongIndex = originalPlaylist.findIndex(song => 
+                        song.title === currentSongTitle.textContent
+                    );
+                }
+                
+                renderSongList();
             }
+            
+            // Render song list
+            function renderSongList() {
+                songListContainer.innerHTML = '';
+                
+                currentPlaylist.forEach((song, index) => {
+                    const songItem = document.createElement('div');
+                    songItem.classList.add('song-item');
+                    if (index === currentSongIndex) {
+                        songItem.classList.add('active');
+                    }
+                    
+                    songItem.innerHTML = `
+                        <img src="${song.cover}" alt="${song.title}">
+                        <div class="song-details">
+                            <h3>${song.title}</h3>
+                            <p>${song.artist}</p>
+                        </div>
+                        <div class="song-duration">${song.duration}</div>
+                    `;
+                    
+                    songItem.addEventListener('click', () => {
+                        currentSongIndex = index;
+                        loadSong(currentSongIndex);
+                    });
+                    
+                    songListContainer.appendChild(songItem);
+                });
+            }
+            
+            // Animate visualizer
+            function animateVisualizer(active) {
+                const bars = document.querySelectorAll('.bar');
+                
+                if (active) {
+                    bars.forEach(bar => {
+                        bar.style.animationPlayState = 'running';
+                    });
+                } else {
+                    bars.forEach(bar => {
+                        bar.style.animationPlayState = 'paused';
+                    });
+                }
+            }
+            
+            // Event listeners
+            playBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    pauseSong();
+                } else {
+                    playSong();
+                }
+            });
+            
+            nextBtn.addEventListener('click', nextSong);
+            prevBtn.addEventListener('click', prevSong);
+            repeatBtn.addEventListener('click', toggleRepeat);
+            shuffleBtn.addEventListener('click', toggleShuffle);
+            
+            progressBar.addEventListener('click', setProgress);
+            volumeBar.addEventListener('click', setVolume);
+            
+            audioPlayer.addEventListener('timeupdate', updateProgress);
+            
+            audioPlayer.addEventListener('ended', () => {
+                if (repeatMode === 2) {
+                    // Repeat current song
+                    audioPlayer.currentTime = 0;
+                    playSong();
+                } else {
+                    nextSong();
+                }
+            });
+            
+            playlistBtn.addEventListener('click', () => {
+                songListModal.style.display = 'block';
+            });
+            
+            closeModal.addEventListener('click', () => {
+                songListModal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === songListModal) {
+                    songListModal.style.display = 'none';
+                }
+            });
+            
+            // Genre tabs
+            genreTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    genreTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const genre = tab.dataset.genre;
+                    if (genre === 'all') {
+                        currentPlaylist = [...originalPlaylist];
+                    } else {
+                        currentPlaylist = originalPlaylist.filter(song => song.genre === genre);
+                    }
+                    
+                    currentSongIndex = 0;
+                    loadSong(currentSongIndex);
+                    renderSongList();
+                });
+            });
+            
+            // Initialize player
+            initPlayer();
         });
-
-        checkoutForm.addEventListener('submit', checkout);
-
-        // Initialize
-        renderProducts();
-        updateCart();
     </script>
 </body>
 </html>
